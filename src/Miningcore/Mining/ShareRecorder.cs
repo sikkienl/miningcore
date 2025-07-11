@@ -20,6 +20,7 @@ using Polly.CircuitBreaker;
 using Contract = Miningcore.Contracts.Contract;
 using Share = Miningcore.Blockchain.Share;
 using static Miningcore.Util.ActionUtils;
+//using Miningcore.Persistence.Postgres.Repositories;
 
 namespace Miningcore.Mining;
 
@@ -33,6 +34,7 @@ public class ShareRecorder : BackgroundService
         JsonSerializerSettings jsonSerializerSettings,
         IShareRepository shareRepo,
         IBlockRepository blockRepo,
+        IMinerWorkerRepository workerRepo,
         ClusterConfig clusterConfig,
         IMessageBus messageBus)
     {
@@ -40,6 +42,7 @@ public class ShareRecorder : BackgroundService
         Contract.RequiresNonNull(mapper);
         Contract.RequiresNonNull(shareRepo);
         Contract.RequiresNonNull(blockRepo);
+        //Contract.RequiresNonNull(workerRepo);
         Contract.RequiresNonNull(jsonSerializerSettings);
         Contract.RequiresNonNull(messageBus);
 
@@ -51,6 +54,7 @@ public class ShareRecorder : BackgroundService
 
         this.shareRepo = shareRepo;
         this.blockRepo = blockRepo;
+        this.workerRepo = workerRepo == null ? new Persistence.Postgres.Repositories.MinerWorkerRepository(mapper) : workerRepo;
 
         pools = clusterConfig.Pools.ToDictionary(x => x.Id, x => x);
 
@@ -61,6 +65,7 @@ public class ShareRecorder : BackgroundService
     private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
     private readonly IShareRepository shareRepo;
     private readonly IBlockRepository blockRepo;
+    private readonly IMinerWorkerRepository workerRepo;
     private readonly IConnectionFactory cf;
     private readonly JsonSerializerSettings jsonSerializerSettings;
     private readonly IMessageBus messageBus;
@@ -93,11 +98,44 @@ public class ShareRecorder : BackgroundService
             // Insert blocks
             foreach(var share in shares)
             {
+
+                //if Worker stats schema is configured, we store best difficulty for worker
+                try
+                {
+                    if(share.ShareDifficulty > 0)
+                    {
+                        var existingWorkerStats = await workerRepo.GetWorkerStatsAsync(con, tx, share.PoolId, share.Miner, share.Worker);
+                        if(existingWorkerStats == null)
+                        {
+                            existingWorkerStats = new MinerWorkerStats();
+                        }
+                        if(existingWorkerStats.BestDifficulty < share.ShareDifficulty)
+                        {
+                            var workerStatsEntity = new MinerWorkerStats
+                            {
+                                BestDifficulty = share.ShareDifficulty,
+                                PoolId = share.PoolId,
+                                Miner = share.Miner,
+                                Worker = share.Worker,
+                                Created = share.Created,
+                            };
+                            await workerRepo.UpdateWorkerStatsAsync(con, tx, workerStatsEntity);
+                        }
+                    }
+                }
+                catch(Exception ex)
+                {
+                    logger.Warn(ex.Message);
+                    logger.Warn(() => $"Unable to update workers stats. Confirm you have the latest DB Schema. | {ex.Message}");
+                }
+
                 if(!share.IsBlockCandidate)
                     continue;
 
                 var blockEntity = mapper.Map<Block>(share);
                 blockEntity.Status = BlockStatus.Pending;
+                blockEntity.Worker = share.Worker;
+                blockEntity.Difficulty = share.ShareDifficulty;
                 await blockRepo.InsertAsync(con, tx, blockEntity);
 
                 if(pools.TryGetValue(share.PoolId, out var poolConfig))

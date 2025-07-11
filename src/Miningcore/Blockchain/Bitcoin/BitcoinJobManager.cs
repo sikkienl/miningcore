@@ -1,7 +1,7 @@
 using Autofac;
 using Miningcore.Blockchain.Bitcoin.Configuration;
-using Miningcore.Blockchain.Bitcoin.DaemonResponses;
 using Miningcore.Blockchain.Bitcoin.Custom.AdventurecoinJob;
+using Miningcore.Blockchain.Bitcoin.DaemonResponses;
 using Miningcore.Configuration;
 using Miningcore.Contracts;
 using Miningcore.Crypto;
@@ -34,7 +34,7 @@ public class BitcoinJobManager : BitcoinJobManagerBase<BitcoinJob>
     protected override object[] GetBlockTemplateParams()
     {
         var result = base.GetBlockTemplateParams();
-
+        
         if(coin.HasMWEB)
         {
             result = new object[]
@@ -56,7 +56,7 @@ public class BitcoinJobManager : BitcoinJobManagerBase<BitcoinJob>
 
         return result;
     }
-
+    
     protected override async Task EnsureDaemonsSynchedAsync(CancellationToken ct)
     {
         using var timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
@@ -112,7 +112,6 @@ public class BitcoinJobManager : BitcoinJobManagerBase<BitcoinJob>
             case "ADVC":
                 return new AdventurecoinJob();
         }
-
         return new();
     }
 

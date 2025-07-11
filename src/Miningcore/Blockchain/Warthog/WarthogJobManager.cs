@@ -365,12 +365,12 @@ public class WarthogJobManager : JobManagerBase<WarthogJob>
 
         try
         {
-            var response = await restClient.Get<GetPeersResponse[]>(WarthogCommands.GetPeers, ct);
+            var response = await restClient.Get<GetPeersResponseContainer>(WarthogCommands.GetPeers, ct);
 
             if(network == WarthogNetworkType.Testnet)
-                return response?.Length >= 0;
+                return response?.Data?.Length >= 0;
             else
-                return response?.Length > 0;
+                return response?.Data?.Length > 0;
         }
         
         catch(Exception)

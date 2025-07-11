@@ -72,7 +72,7 @@ public class PhihashLight : IProgpowLight
                 future = new Cache(epoch + 1);
 
 #pragma warning disable 4014
-                future.GenerateAsync(logger, ct);
+                future.GenerateAsync(logger);
 #pragma warning restore 4014
             }
 
@@ -80,7 +80,7 @@ public class PhihashLight : IProgpowLight
         }
 
         // get/generate current one
-        await result.GenerateAsync(logger, ct);
+        await result.GenerateAsync(logger);
 
         return result;
     }

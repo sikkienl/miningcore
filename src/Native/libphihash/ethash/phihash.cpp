@@ -7,8 +7,10 @@
 #include "bit_manipulation.h"
 #include "endianness.hpp"
 #include "ethash-internal.hpp"
-#include "kiss99.hpp"
 #include "keccak.hpp"
+#include "pcg32.hpp"
+
+#include <cmath>
 
 #include <array>
 
@@ -51,7 +53,7 @@ public:
     uint32_t next_dst() noexcept { return dst_seq[(dst_counter++) % num_regs]; }
     uint32_t next_src() noexcept { return src_seq[(src_counter++) % num_regs]; }
 
-    kiss99 rng;
+    pcg32 rng;
 
 private:
     size_t dst_counter = 0;
@@ -61,16 +63,15 @@ private:
 };
 
 mix_rng_state::mix_rng_state(uint32_t* hash_seed) noexcept
+    : rng{0, 0} 
 {
     const auto seed_lo = static_cast<uint32_t>(hash_seed[0]);
     const auto seed_hi = static_cast<uint32_t>(hash_seed[1]);
 
     const auto z = fnv1a(fnv_offset_basis, seed_lo);
     const auto w = fnv1a(z, seed_hi);
-    const auto jsr = fnv1a(w, seed_lo);
-    const auto jcong = fnv1a(jsr, seed_hi);
 
-    rng = kiss99{z, w, jsr, jcong};
+    rng = pcg32{z, w};
 
     // Create random permutations of mix destinations / sources.
     // Uses Fisher-Yates shuffle.
@@ -88,37 +89,48 @@ mix_rng_state::mix_rng_state(uint32_t* hash_seed) noexcept
 }
 
 
-
 NO_SANITIZE("unsigned-integer-overflow")
 inline uint32_t random_math(uint32_t a, uint32_t b, uint32_t selector) noexcept
 {
-    switch (selector % 11)
-    {
-    default:
-    case 0:
-        return a + b;
-    case 1:
-        return a * b;
-    case 2:
-        return mul_hi32(a, b);
-    case 3:
-        return std::min(a, b);
-    case 4:
-        return rotl32(a, b);
-    case 5:
-        return rotr32(a, b);
-    case 6:
-        return a & b;
-    case 7:
-        return a | b;
-    case 8:
-        return a ^ b;
-    case 9:
-        return clz32(a) + clz32(b);
-    case 10:
-        return popcount32(a) + popcount32(b);
-    }
+    using MathOp = uint32_t(*)(uint32_t, uint32_t);
+   
+    auto add = [](uint32_t x, uint32_t y) { return x + y; };
+    auto multiply = [](uint32_t x, uint32_t y) { return x * y; };
+    auto subtract = [](uint32_t x, uint32_t y) { return x - y; };
+    auto min_op = [](uint32_t x, uint32_t y) { return std::min(x, y); };
+    auto max_op = [](uint32_t x, uint32_t y) { return std::max(x, y); };
+    auto rotl = [](uint32_t x, uint32_t y) { return rotl32(x, y & 31); };
+    auto rotr = [](uint32_t x, uint32_t y) { return rotr32(x, y & 31); };
+    auto bitwise_and = [](uint32_t x, uint32_t y) { return x & y; };
+    auto bitwise_or = [](uint32_t x, uint32_t y) { return x | y; };
+    auto bitwise_xor = [](uint32_t x, uint32_t y) { return x ^ y; };
+    
+    auto tanh = [](uint32_t x, uint32_t y) {
+        constexpr float PHI = 0.61803398875f;
+        float sum = static_cast<float>(x) + static_cast<float>(y);
+        float result = std::tanh(sum * PHI);
+        float frac_part = result - std::floor(result);
+        return static_cast<uint32_t>(frac_part * (1ULL << 32));
+    };
+
+    static const MathOp operations[] = {
+        add,                // case 0
+        multiply,           // case 1
+        subtract,           // case 2
+        min_op,             // case 3
+        max_op,             // case 4
+        rotl,               // case 5
+        rotr,               // case 6
+        bitwise_and,        // case 7
+        bitwise_or,         // case 8
+        bitwise_xor,        // case 9
+        tanh                // case 10
+    };
+
+    uint32_t op_index = selector % 11; 
+    return operations[op_index](a, b);
 }
+
 
 /// Merge data from `b` and `a`.
 /// Assuming `a` has high entropy, only do ops that retain entropy even if `b`
@@ -243,16 +255,13 @@ mix_array init_mix(uint32_t* hash_seed)
     mix_array mix;
     for (uint32_t l = 0; l < mix.size(); ++l)
     {
-        const uint32_t jsr = fnv1a(w, l);
-        const uint32_t jcong = fnv1a(jsr, l);
-        kiss99 rng{z, w, jsr, jcong};
+        pcg32 rng{z, w};
 
         for (auto& row : mix[l])
             row = rng();
     }
     return mix;
 }
-
 hash256 hash_mix(
     const epoch_context& context, int block_number, uint32_t * seed, lookup_fn lookup) noexcept
 {
@@ -285,6 +294,87 @@ hash256 hash_mix(
     return le::uint32s(mix_hash);
 }
 }  // namespace
+
+result hashext(const epoch_context& context, int block_number, const hash256& header_hash,
+    uint64_t nonce, const hash256& mix_hash, const hash256& boundary1, const hash256& boundary2, int* retcode) noexcept
+{
+    uint32_t hash_seed[2];  // KISS99 initiator
+
+    uint32_t state2[8];
+
+    {
+        uint32_t state[25] = {0x0};     // Keccak's state
+
+        // Absorb phase for initial round of keccak
+        // 1st fill with header data (8 words)
+        for (int i = 0; i < 8; i++)
+            state[i] = header_hash.word32s[i];
+
+        // 2nd fill with nonce (2 words)
+        state[8] = (uint32_t)nonce;
+        state[9] = (uint32_t)(nonce >> 32);
+
+        // 3rd apply ravencoin input constraints
+        for (int i = 10; i < 25; i++)
+            state[i] = phicoin_phihash[i-10];
+
+        keccak_phihash_64(state);
+
+        for (int i = 0; i < 8; i++)
+            state2[i] = state[i];
+    }
+
+    hash_seed[0] = state2[0];
+    hash_seed[1] = state2[1];
+    //mix hash was here
+
+    uint32_t state[25] = {0x0};     // Keccak's state
+
+    // Absorb phase for last round of keccak (256 bits)
+    // 1st initial 8 words of state are kept as carry-over from initial keccak
+    for (int i = 0; i < 8; i++)
+        state[i] = state2[i];
+
+    // 2nd subsequent 8 words are carried from digest/mix
+    for (int i = 8; i < 16; i++)
+        state[i] = mix_hash.word32s[i-8];
+
+    // 3rd apply ravencoin input constraints
+    for (int i = 16; i < 25; i++)
+        state[i] = phicoin_phihash[i - 16];
+
+    // Run keccak loop
+    keccak_phihash_256(state);
+
+    /* mod start */
+	hash256 output;
+    for (int i = 0; i < 8; ++i)
+        output.word32s[i] = le::uint32(state[i]);
+
+
+    if (!is_less_or_equal(output, boundary1)) {
+		//if(boundary1 == boundary2) {
+        if(is_equal(boundary1, boundary2)) {
+		  *retcode = 1;
+          return {output, mix_hash};
+		}
+	    else {
+			if (!is_less_or_equal(output, boundary2)) {
+				 *retcode = 1;
+				 return {output, mix_hash};
+			}
+		}
+    }
+
+	const hash256 computed_mix_hash = hash_mix(context, block_number, hash_seed, calculate_dataset_item_2048);
+	if(!is_equal(computed_mix_hash, mix_hash)) {
+		*retcode = 2;
+		return {output, mix_hash};
+	}
+	/* mod end */
+	*retcode = 0;
+    return {output, computed_mix_hash};
+}
 
 result hash(const epoch_context& context, int block_number, const hash256& header_hash,
     uint64_t nonce) noexcept
@@ -568,15 +658,3 @@ search_result search(const epoch_context_full& context, int block_number,
 }
 
 }  // namespace phihash
-
-extern "C" EXPORT ethash::result hash(const ethash::epoch_context& context, int block_number, const ethash::hash256& header_hash,
-    uint64_t nonce) noexcept
-{
-    return phihash::hash(context, block_number, header_hash, nonce);
-}
-
-extern "C" EXPORT bool verify(const ethash::epoch_context& context, int block_number, const ethash::hash256& header_hash,
-    const ethash::hash256& mix_hash, uint64_t nonce, const ethash::hash256& boundary) noexcept
-{
-    return phihash::verify(context, block_number, header_hash, mix_hash, nonce, boundary);
-}

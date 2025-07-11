@@ -603,6 +603,7 @@ public class HandshakeJob
             BlockHeight = BlockTemplate.Height,
             NetworkDifficulty = Difficulty,
             Difficulty = stratumDifficulty / shareMultiplier,
+            ShareDifficulty = shareDiff
         };
 
         if(isBlockCandidate)

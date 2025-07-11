@@ -1222,7 +1222,7 @@ void yespowerURX_hash(const char* input, char* output, uint32_t len)
         .N = 2048,
         .r = 32,
         .pers = (const uint8_t *)"UraniumX",
-        .perslen = 8
+        .perslen = 8 
     };
     yespower_tls( input, len, &yespower_1_0_uraniumx, (yespower_binary_t *)output);
 }
@@ -1234,7 +1234,7 @@ void yespowerLTNCG_hash(const char* input, char* output, uint32_t len)
         .N = 2048,
         .r = 32,
         .pers = (const uint8_t *)"LTNCGYES",
-        .perslen = 8
+        .perslen = 8 
     };
     yespower_tls( input, len, &yespower_1_0_ltncg, (yespower_binary_t *)output);
 }
@@ -1246,7 +1246,7 @@ void yespowerLITB_hash(const char* input, char* output, uint32_t len)
 	.N = 2048,
 	.r = 32,
 	.pers = "LITBpower: The number of LITB working or available for proof-of-work mining",
-	.perslen = 73
+	.perslen = 73 
     };
     yespower_tls( input, len, &yespower_1_0_litb, (yespower_binary_t *)output);
 }
@@ -1258,33 +1258,33 @@ void yespowerTIDE_hash(const char* input, char* output, uint32_t len)
         .N = 2048,
         .r = 8,
         .pers = NULL,
-        .perslen = 0
+        .perslen = 0 
     };
     yespower_tls( input, len, &yespower_1_0_tide, (yespower_binary_t *)output);
 }
 
 void cpupower_hash(const char* input, char* output, uint32_t len)
 {
-    	yespower_params_t yespower_1_0_cpupower =
+    	yespower_params_t yespower_1_0_cpupower = 
 	{
 		.version = YESPOWER_1_0,
 		.N = 2048,
 		.r = 32,
 		.pers = "CPUpower: The number of CPU working or available for proof-of-work mining",
-		.perslen = 73
+		.perslen = 73 
     	};
     	yespower_tls( input, len, &yespower_1_0_cpupower, (yespower_binary_t *)output);
 }
 
 void power2b_hash(const char* input, char* output, uint32_t len)
 {
-    	yespower_params_t yespower_b2b_power2b =
+    	yespower_params_t yespower_b2b_power2b = 
 	{
 		.version = YESPOWER_1_0,
 		.N = 2048,
 		.r = 32,
 		.pers = "Now I am become Death, the destroyer of worlds",
-		.perslen = 46
+		.perslen = 46 
     	};
     	yespower_b2b_tls( input, len, &yespower_b2b_power2b, (yespower_binary_t *)output);
 }
@@ -1319,8 +1319,8 @@ void yespowerADVC_hash(const char* input, char* output, uint32_t len)
         .version = YESPOWER_1_0,
         .N = 2048,
         .r = 32,
-        .pers = (const uint8_t *)"Let the quest begin",
+        .pers = (const uint8_t*)"Let the quest begin",
         .perslen = 19
     };
-    yespower_tls(input, len, &yespower_1_0_ADVC, (yespower_binary_t *)output);
+    yespower_tls(input, len, &yespower_1_0_ADVC, (yespower_binary_t*)output);
 }

@@ -4,7 +4,6 @@ using Miningcore.Configuration;
 using Miningcore.Persistence.Model;
 using Miningcore.Persistence.Model.Projections;
 using Newtonsoft.Json.Linq;
-using MinerStats = Miningcore.Persistence.Model.Projections.MinerStats;
 
 namespace Miningcore;
 
@@ -48,6 +47,8 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Twitter, opt => opt.MapFrom(src => src.Twitter))
             .ForMember(dest => dest.Discord, opt => opt.MapFrom(src => src.Discord))
             .ForMember(dest => dest.Telegram, opt => opt.MapFrom(src => src.Telegram))
+            .ForMember(dest => dest.MarketSlug, opt => opt.MapFrom(src => src.MarketSlug))
+            .ForMember(dest => dest.MarketProvider, opt => opt.MapFrom(src => src.MarketProvider.ToString().ToLower()))
             .ForMember(dest => dest.Algorithm, opt => opt.MapFrom(src => src.GetAlgorithmName()));
 
         CreateMap<PoolConfig, Api.Responses.PoolInfo>()
@@ -70,6 +71,9 @@ public class AutoMapperProfile : Profile
         CreateMap<WorkerPerformanceStats, Api.Responses.WorkerPerformanceStats>();
         CreateMap<WorkerPerformanceStatsContainer, Api.Responses.WorkerPerformanceStatsContainer>();
         CreateMap<MinerWorkerPerformanceStats, Api.Responses.MinerPerformanceStats>();
+        CreateMap<MinerWorkerStats, Api.Responses.WorkerStats>();
+
+
 
         // PostgreSQL
         CreateMap<Persistence.Model.Share, Persistence.Postgres.Entities.Share>();
@@ -77,6 +81,7 @@ public class AutoMapperProfile : Profile
         CreateMap<Balance, Persistence.Postgres.Entities.Balance>();
         CreateMap<Payment, Persistence.Postgres.Entities.Payment>();
         CreateMap<MinerSettings, Persistence.Postgres.Entities.MinerSettings>();
+        CreateMap<MinerWorkerStats, Persistence.Postgres.Entities.MinerWorkerStats>();
         CreateMap<PoolStats, Persistence.Postgres.Entities.PoolStats>();
 
         CreateMap<MinerWorkerPerformanceStats, Persistence.Postgres.Entities.MinerWorkerPerformanceStats>()
@@ -96,6 +101,7 @@ public class AutoMapperProfile : Profile
         CreateMap<Persistence.Postgres.Entities.BalanceChange, BalanceChange>();
         CreateMap<Persistence.Postgres.Entities.PoolStats, PoolStats>();
         CreateMap<Persistence.Postgres.Entities.MinerSettings, MinerSettings>();
+        CreateMap<Persistence.Postgres.Entities.MinerWorkerStats, MinerWorkerStats>();
         CreateMap<Persistence.Postgres.Entities.MinerWorkerPerformanceStats, MinerWorkerPerformanceStats>();
         CreateMap<Persistence.Postgres.Entities.MinerWorkerPerformanceStats, Api.Responses.MinerPerformanceStats>();
 

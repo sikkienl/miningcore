@@ -118,6 +118,8 @@ public class Program : BackgroundService
             LogRuntimeInfo();
             ValidateRuntimeEnvironment();
 
+            
+
             var hostBuilder = new HostBuilder();
 
             hostBuilder
@@ -260,6 +262,8 @@ public class Program : BackgroundService
                 await Console.Error.WriteLineAsync(ex.Message);
 
             await Console.Error.WriteLineAsync("\nCluster cannot start. Good Bye!");
+            await Console.Error.WriteLineAsync("\nPress <enter> to exit");
+            Console.ReadLine();
         }
 
         catch(JsonException)
@@ -278,6 +282,8 @@ public class Program : BackgroundService
                 Console.Error.WriteLine(ex);
 
             await Console.Error.WriteLineAsync("Cluster cannot start. Good Bye!");
+            await Console.Error.WriteLineAsync("\nPress <enter> to exit");
+            Console.ReadLine();
         }
 
         catch(OperationCanceledException)
@@ -290,6 +296,8 @@ public class Program : BackgroundService
             Console.Error.WriteLine(ex);
 
             await Console.Error.WriteLineAsync("Cluster cannot start. Good Bye!");
+            await Console.Error.WriteLineAsync("\nPress <enter> to exit");
+            Console.ReadLine();
         }
     }
 
@@ -483,6 +491,19 @@ public class Program : BackgroundService
                 // emit a newline before regular logging output starts
                 Console.WriteLine();
             }
+
+            //Validate DB SCHEMA and add any missing columns/tables/indexes
+            if(!String.IsNullOrEmpty(clusterConfig?.Persistence?.Postgres?.Database))
+            {
+                try
+                {
+                    SystemRepository.EnsureDBSchema(clusterConfig);
+                }
+                catch(Exception ex)
+                {
+                    throw new PoolStartupException("Unable to validate Database Schema: " + ex.Message);
+                }
+            }
         }
 
         catch(ValidationException ex)
@@ -630,21 +651,18 @@ public class Program : BackgroundService
  ██║╚██╔╝██║██║██║╚██╗██║██║██║╚██╗██║██║   ██║██║     ██║   ██║██╔══██╗██╔══╝
  ██║ ╚═╝ ██║██║██║ ╚████║██║██║ ╚████║╚██████╔╝╚██████╗╚██████╔╝██║  ██║███████╗
 ");
-        Console.WriteLine(" https://github.com/blackmennewstyle/miningcore\n");
+        Console.WriteLine(" https://github.com/TheRetroMike/rmt-miningcore\n");
         Console.WriteLine(" Donate to one of these addresses to support the project:\n");
-        Console.WriteLine(" ETH  - 0xbC059e88A4dD11c2E882Fc6B83F8Ec12E4CCCFad");
-        Console.WriteLine(" BTC  - 16xvkGfG9nrJSKKo5nGWphP8w4hr2ZzVuw");
-        Console.WriteLine(" LTC  - LLs76baYT7iMqQhizxtBC96Cy48iX3Eh1p");
-        Console.WriteLine(" DOGE - DFuvDSFh4N3SiXGDnye2Vbc8kqvMHbyQE1");
-        Console.WriteLine(" KAS  - kaspa:qpmf0wyu7c5z4l82ax9cfc5ughwk2f9lgu8uckkqrrpjqkxuk7yrga5nntvgn");
-        Console.WriteLine(" CCX  - ccx7S4B3gBeH1SGWCfqZp3NM7Vavg7H3S8ovJn8fU4bwC4vU7ChWfHtbNzifhrpbJ74bMDxj4KZFTcznTfsucCEg1Kgv7zbNgs");
-        Console.WriteLine(" FIRO - a5AsoTSkfPHQ3SUmR6binG1XW7oQQoFNU1");
-        Console.WriteLine(" ERGO - 9gYyuZzaSw3TiCtUkSRuS3XVDUv41EFs3dtNCFGqiEwHqpb7gkF");
-        Console.WriteLine(" WART - 7795fc0fe93e7e4e232a212f00bdc8885c580a5666d39a0d");
-        Console.WriteLine(" XMR  - 483zaHtMRfM7rw1dXgebhWaRR8QLgAF6w4BomAV319FVVHfdbYTLVuBRc4pQgRAnRpfy6CXvvwngK4Lo3mRKE29RRx3Jb5c");
-        Console.WriteLine(" XEL  - xel:ajnsfv065qusndt0hfsngecrnf5690drmqmc0uq0etlx8zjlcyzqq2slgvt");
-        Console.WriteLine(" CTXC - 0xbb60200d5151a4a0f9a75014e04cf61a0a9f0daf");
-        Console.WriteLine(" ZANO - ZxDKT1aqiEXPA5cDADtYEfMR1oXsRd68bby4nzUvVmnjHzzrfvjwhNdQ9yiWNeGutzg9LZdwsbP2FGB1gNpZXiYY1fCfpw33c");
+
+        Console.WriteLine(" BCH  - bitcoincash:qzczcn98zusq77fk6jq744xu0u8jlrd6su930qk7x7");
+        Console.WriteLine(" BNB  - 0xde6b4E548d71459Af5041dA71883AEA62426e68E");
+        Console.WriteLine(" BTC  - 31q6x9Vp9J2BJ8rTnW4F8aP744CEAScFN5");
+        Console.WriteLine(" DOGE - DSQLL3m5B1BwZa7jaNnoYaXHVeT9cAHUvd");
+        Console.WriteLine(" ETH  - 0xde6b4E548d71459Af5041dA71883AEA62426e68E");
+        Console.WriteLine(" KAS  - kaspa:qzs36kutqphrqzwnl34zd36wqtsr97dvy6np83ugqac75zjgvsy7qgk4yr722");
+        Console.WriteLine(" LTC  - MAhooUHqeTdhJoMEjbgTwFSqhZmbzyko83");
+        Console.WriteLine(" POL  - 0xde6b4E548d71459Af5041dA71883AEA62426e68E");
+        Console.WriteLine(" SOL  - AsHA1y22XnYf3SwP6g5iGSvJhMcSGaBtEQbzcSccPkJ4");
         Console.WriteLine();
     }
 

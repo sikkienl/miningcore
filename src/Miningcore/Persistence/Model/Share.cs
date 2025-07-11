@@ -11,5 +11,6 @@ public record Share
     public double NetworkDifficulty { get; init; }
     public string IpAddress { get; init; }
     public string Source { get; init; }
+    public double ShareDifficulty { get; init; }
     public DateTime Created { get; init; }
 }

@@ -10,9 +10,9 @@ public unsafe class YespowerADVC : IHashAlgorithm
     {
         Contract.Requires<ArgumentException>(result.Length >= 32);
 
-        fixed (byte* input = data)
+        fixed(byte* input = data)
         {
-            fixed (byte* output = result)
+            fixed(byte* output = result)
             {
                 Multihash.yespowerADVC(input, output, (uint) data.Length);
             }

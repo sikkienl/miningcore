@@ -34,6 +34,8 @@ CREATE TABLE blocks
 	reward decimal(28,12) NULL,
     source TEXT NULL,
     hash TEXT NULL,
+    worker TEXT NULL,
+    difficulty DOUBLE PRECISION NULL,
 	created TIMESTAMPTZ NOT NULL
 );
 
@@ -70,6 +72,9 @@ CREATE TABLE miner_settings
 	poolid TEXT NOT NULL,
 	address TEXT NOT NULL,
 	paymentthreshold decimal(28,12) NOT NULL,
+    autoconversionenabled bool NULL,
+    autoconversiondestination TEXT NULL,
+    autoconversiondestinationaddress TEXT NULL,
 	created TIMESTAMPTZ NOT NULL,
 	updated TIMESTAMPTZ NOT NULL,
 
@@ -120,3 +125,20 @@ CREATE TABLE minerstats
 CREATE INDEX IDX_MINERSTATS_POOL_CREATED on minerstats(poolid, created);
 CREATE INDEX IDX_MINERSTATS_POOL_MINER_CREATED on minerstats(poolid, miner, created);
 CREATE INDEX IDX_MINERSTATS_POOL_MINER_WORKER_CREATED_HASHRATE on minerstats(poolid,miner,worker,created desc,hashrate);
+
+CREATE TABLE workerstats
+(
+    poolid TEXT NOT NULL,
+	miner TEXT NOT NULL,
+    worker TEXT NOT NULL,
+	bestdifficulty DOUBLE PRECISION NOT NULL DEFAULT 0,
+	created TIMESTAMPTZ NOT NULL,
+	updated TIMESTAMPTZ NOT NULL,
+
+	primary key(poolid, miner, worker)
+);
+
+CREATE INDEX IDX_WORKERSTATS_POOL_CREATED on workerstats(poolid, created);
+CREATE INDEX IDX_WORKERSTATS_POOL_MINER_CREATED on workerstats(poolid, miner, created);
+CREATE INDEX IDX_WORKERSTATS_POOL_MINER__WORKER_CREATED on workerstats(poolid, miner, worker, created);
+CREATE INDEX IDX_WORKERSTATS_POOL_MINER_WORKER_CREATED_BESTDIFFICULTY on workerstats(poolid,miner,worker,created desc,bestdifficulty);

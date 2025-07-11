@@ -12,3 +12,8 @@ public class GetPeersResponse
 {
     public GetPeersChain Chain { get; set; }
 }
+
+public class GetPeersResponseContainer : WarthogResponseBase
+{
+    public GetPeersChain[] Data { get; set; }
+}

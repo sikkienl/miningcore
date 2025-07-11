@@ -26,7 +26,7 @@ public class RavencoinConstants
 
 public class PhicoinConstants
 {
-    public const int EpochLength = 30000;
+    public const int EpochLength = 2102400;
     public static BigInteger BigMaxValue = BigInteger.Pow(2, 256);
     public static readonly BigInteger Diff1B = BigInteger.Parse("00000000ff000000000000000000000000000000000000000000000000000000", NumberStyles.AllowHexSpecifier, null);
     public static readonly BigInteger Diff1 = BigInteger.Parse("00000000ff000000000000000000000000000000000000000000000000000000", NumberStyles.HexNumber);
@@ -53,3 +53,4 @@ public class TelestaiConstants
     public const int ExtranoncePlaceHolderLength = 2;
     public static double Multiplier = (double) new BigRational(BigMaxValue, Diff1);
 }
+

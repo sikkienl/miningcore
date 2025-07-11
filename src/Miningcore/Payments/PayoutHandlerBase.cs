@@ -8,6 +8,7 @@ using Miningcore.Mining;
 using Miningcore.Notifications.Messages;
 using Miningcore.Persistence;
 using Miningcore.Persistence.Model;
+using Miningcore.Persistence.Postgres.Repositories;
 using Miningcore.Persistence.Repositories;
 using Miningcore.Time;
 using Newtonsoft.Json;
@@ -99,6 +100,32 @@ public abstract class PayoutHandlerBase
             {
                 logger.Info(() => $"Crediting {address} with {FormatAmount(amount)}");
                 await balanceRepo.AddAmountAsync(con, tx, poolConfig.Id, address, amount, $"Reward for block {block.BlockHeight}");
+            }
+
+            if(poolConfig.MinerBonusPercentage > 0)
+            {
+                var bonusAmount = amount * (poolConfig.MinerBonusPercentage / 100.0m);
+
+                //Gets active miners on pool and credits the bonus amount if configured
+                IStatsRepository statsRepo = new StatsRepository(mapper, clock);
+                var workers = await statsRepo.GetPoolMinerWorkerHashratesAsync(con, poolConfig.Id, ct);
+                if(workers != null && workers.Count() > 0)
+                {
+                    var miners = workers.Select(x => x.Miner).Distinct();
+                    if(miners != null && miners.Count() > 0)
+                    {
+                        var minerBonusAmount = bonusAmount / miners.Count();
+                        foreach(var miner in miners)
+                        {
+                            // skip bonus from pool wallet to pool wallet
+                            if(miner != poolConfig.Address)
+                            {
+                                //logger.Info(() => $"Crediting {miner} with bonus {FormatAmount(minerBonusAmount)}");
+                                await balanceRepo.AddAmountAsync(con, tx, poolConfig.Id, miner, minerBonusAmount, $"Mining Bonus for block {block.BlockHeight}");
+                            }
+                        }
+                    }
+                }
             }
         }
 

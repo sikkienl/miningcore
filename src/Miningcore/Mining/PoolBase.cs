@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using NLog;
 using Contract = Miningcore.Contracts.Contract;
 using static Miningcore.Util.ActionUtils;
+//using AutoMapper.Execution;
 
 // ReSharper disable InconsistentlySynchronizedField
 
@@ -55,6 +56,7 @@ public abstract class PoolBase : StratumServer,
         this.cf = cf;
         blocksRepo = ctx.Resolve<IBlockRepository>();
         shareRepo = ctx.Resolve<IShareRepository>();
+        workerRepo = ctx.Resolve<IMinerWorkerRepository>();
         this.statsRepo = statsRepo;
         this.mapper = mapper;
         this.nicehashService = nicehashService;
@@ -65,6 +67,7 @@ public abstract class PoolBase : StratumServer,
     protected readonly IConnectionFactory cf;
     protected readonly IBlockRepository blocksRepo;
     protected readonly IShareRepository shareRepo;
+    protected readonly IMinerWorkerRepository workerRepo;
     protected readonly IStatsRepository statsRepo;
     protected readonly IMapper mapper;
     protected readonly NicehashService nicehashService;

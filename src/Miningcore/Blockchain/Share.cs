@@ -57,6 +57,7 @@ public class Share
     /// <summary>
     /// Block reward after deducting pool fee and donations
     /// </summary>
+    [ProtoMember(4)]
     public decimal BlockReward { get; set; }
 
     /// <summary>
@@ -101,4 +102,10 @@ public class Share
     /// </summary>
     [ProtoMember(15)]
     public DateTime Created { get; set; }
+
+    /// <summary>
+    /// Difficulty of the share that was submitted (used for reporting on best difficulty and track difficulty used to solve block)
+    /// </summary>
+    [ProtoMember(17)]
+    public double ShareDifficulty { get; set; }
 }

@@ -35,37 +35,30 @@ public class Cache : IProgpowCache
         }
     }
 
-    public async Task GenerateAsync(ILogger logger, CancellationToken ct)
+    public async Task GenerateAsync(ILogger logger)
     {
-        if(handle == IntPtr.Zero)
+        await Task.Run(() =>
         {
-            await Task.Run(() =>
+            lock(genLock)
             {
-                lock(genLock)
+                if(!isGenerated)
                 {
-                    if(!isGenerated)
-                    {
-                        // re-check after obtaining lock
-                        if(handle != IntPtr.Zero)
-                            return;
 
-                        var started = DateTime.Now;
-                        logger.Debug(() => $"Generating cache for epoch {Epoch}");
+                    var started = DateTime.Now;
+                    logger.Debug(() => $"Generating cache for epoch {Epoch}");
 
-                        handle = PhiHash.CreateContext(Epoch);
+                    handle = PhiHash.CreateContext(Epoch);
 
-                        logger.Debug(() => $"Done generating cache for epoch {Epoch} after {DateTime.Now - started}");
+                    logger.Debug(() => $"Done generating cache for epoch {Epoch} after {DateTime.Now - started}");
+                    isGenerated = true;
 
-                        // get the seed hash for this epoch
-                        var res = PhiHash.calculate_epoch_seed(Epoch);
-                        SeedHash = res.bytes;
-                        logger.Info(() => $"Seed hash for epoch {Epoch} is {SeedHash.ToHexString()}");
-                        
-                        isGenerated = true;
-                    }
+                    // get the seed hash for this epoch
+                    var res = PhiHash.calculate_epoch_seed(Epoch);
+                    SeedHash = res.bytes;
+                    logger.Info(() => $"Seed hash for epoch {Epoch} is {SeedHash.ToHexString()}");
                 }
-            }, ct);
-        }
+            }
+        });
     }
 
     public unsafe bool Compute(ILogger logger, int blockNumber, byte[] hash, ulong nonce, out byte[] mixDigest, out byte[] result)

@@ -82,7 +82,8 @@ public class BeamJob
         {
             BlockHeight = (long) BlockTemplate.Height,
             NetworkDifficulty = Difficulty,
-            Difficulty = stratumDifficulty
+            Difficulty = stratumDifficulty,
+            ShareDifficulty = shareDiff
         };
 
         if(isBlockCandidate)

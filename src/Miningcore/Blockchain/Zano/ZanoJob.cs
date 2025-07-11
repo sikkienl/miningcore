@@ -158,6 +158,7 @@ public class ZanoJob
         {
             BlockHeight = BlockTemplate.Height,
             Difficulty = stratumDifficulty / shareMultiplier,
+            ShareDifficulty = shareDiff
         };
 
         if(isBlockCandidate)

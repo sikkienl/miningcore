@@ -102,6 +102,7 @@ public class NexaJob
             NetworkDifficulty = Difficulty,
             Difficulty = stratumDifficulty / shareMultiplier,
             IsBlockCandidate = isBlockCandidate,
+            ShareDifficulty = shareDiff
         };
 
         return (share, submitParams);

@@ -27,10 +27,10 @@ public class AdventurecoinJob : BitcoinJob
 
     protected override Money CreateDeveloperOutputs(Transaction tx, Money reward)
     {
-        if (developerParameters.Developer != null)
+        if(developerParameters.Developer != null)
         {
             Developer[] developers;
-            if (developerParameters.Developer.Type == JTokenType.Array)
+            if(developerParameters.Developer.Type == JTokenType.Array)
                 developers = developerParameters.Developer.ToObject<Developer[]>();
             else
                 developers = new[] { developerParameters.Developer.ToObject<Developer>() };
@@ -41,7 +41,7 @@ public class AdventurecoinJob : BitcoinJob
                 {
                     if(!string.IsNullOrEmpty(Developer.Script))
                     {
-                        Script payeeAddress = new (Developer.Script.HexToByteArray());
+                        Script payeeAddress = new(Developer.Script.HexToByteArray());
                         var payeeReward = Developer.Amount;
 
                         tx.Outputs.Add(payeeReward, payeeAddress);

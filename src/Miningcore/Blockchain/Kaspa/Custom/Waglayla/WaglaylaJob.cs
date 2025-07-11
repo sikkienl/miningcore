@@ -14,7 +14,7 @@ public class WagLaylaJob : KaspaJobAltKHeavy
     protected Blake3IHash blake3Hasher;
     protected Sha3_256 sha3_256Hasher;
 
-    public WagLaylaJob(IHashAlgorithm customBlockHeaderHasher, IHashAlgorithm customCoinbaseHasher, IHashAlgorithm customShareHasher) 
+    public WagLaylaJob(IHashAlgorithm customBlockHeaderHasher, IHashAlgorithm customCoinbaseHasher, IHashAlgorithm customShareHasher)
         : base(customBlockHeaderHasher, customCoinbaseHasher, customShareHasher)
     {
         this.blake3Hasher = new Blake3IHash();
@@ -70,7 +70,8 @@ public class WagLaylaJob : KaspaJobAltKHeavy
         {
             BlockHeight = (long) BlockTemplate.Header.DaaScore,
             NetworkDifficulty = Difficulty,
-            Difficulty = context.Difficulty / shareMultiplier
+            Difficulty = context.Difficulty / shareMultiplier,
+            ShareDifficulty = shareDiff
         };
 
         if(isBlockCandidate)

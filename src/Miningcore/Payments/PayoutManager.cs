@@ -4,6 +4,8 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Autofac;
 using Autofac.Features.Metadata;
+using AutoMapper;
+using CoinGecko.Net.Clients;
 using Microsoft.Extensions.Hosting;
 using Miningcore.Configuration;
 using Miningcore.Extensions;
@@ -12,8 +14,12 @@ using Miningcore.Mining;
 using Miningcore.Notifications.Messages;
 using Miningcore.Persistence;
 using Miningcore.Persistence.Model;
+using Miningcore.Persistence.Postgres.Repositories;
 using Miningcore.Persistence.Repositories;
+//using NBitcoin;
+using Newtonsoft.Json;
 using NLog;
+using RestSharp;
 using Contract = Miningcore.Contracts.Contract;
 
 namespace Miningcore.Payments;
@@ -142,7 +148,7 @@ public class PayoutManager : BackgroundService
                     return CoinFamily.Bitcoin;
 
                 break;
-
+            
             case CoinFamily.Progpow:
                 return CoinFamily.Bitcoin;
         }
@@ -153,7 +159,7 @@ public class PayoutManager : BackgroundService
     private async Task UpdatePoolBalancesAsync(IMiningPool pool, PoolConfig poolConfig, IPayoutHandler handler, IPayoutScheme scheme, CancellationToken ct)
     {
         // get pending blockRepo for pool
-        var pendingBlocks = await cf.Run(con => blockRepo.GetPendingBlocksForPoolAsync(con, poolConfig.Id));
+        var pendingBlocks = await cf.Run(con => blockRepo.GetPendingBlocksForPoolAsync(con, poolConfig.Id, poolConfig.PaymentProcessing.ProcessingBlockLimit ?? 10000));
 
         // classify
         var updatedBlocks = await handler.ClassifyBlocksAsync(pool, pendingBlocks, ct);
@@ -199,6 +205,120 @@ public class PayoutManager : BackgroundService
     private async Task PayoutPoolBalancesAsync(IMiningPool pool, PoolConfig config, IPayoutHandler handler, CancellationToken ct)
     {
         var poolBalancesOverMinimum = await cf.Run(con =>
+            balanceRepo.GetPoolBalancesOverThresholdAsync(con, config.Id, config.PaymentProcessing.MinimumPayment));
+
+        //transfer balances if auto exchanging is enabled
+        if(config.PaymentProcessing.AutoExchangingFromEnabled && poolBalancesOverMinimum.Length > 0)
+        {
+            //get current exchange rates
+            var coinGeckoConversionCoins = clusterConfig.Pools.Where(x => x.Enabled && x.PaymentProcessing.AutoExchangingToEnabled && x.Template.MarketProvider == MarketProvider.CoinGecko).Select(x => x.Template.MarketSlug).Distinct();
+            var xeggexConversionCoins = clusterConfig.Pools.Where(x => x.Enabled && x.PaymentProcessing.AutoExchangingToEnabled && x.Template.MarketProvider == MarketProvider.Xeggex).Select(x => x.Template.MarketSlug).Distinct();
+            var bitcointryConversionCoins = clusterConfig.Pools.Where(x => x.Enabled && x.PaymentProcessing.AutoExchangingToEnabled && x.Template.MarketProvider == MarketProvider.Bitcointry).Select(x => x.Template.MarketSlug).Distinct();
+
+            Dictionary<String, Decimal> marketValues = new Dictionary<string, decimal>();
+            if(coinGeckoConversionCoins.Any())
+            {
+                //lookup prices on coingecko
+                var client = new CoinGeckoRestClient();
+                var markets = await client.Api.GetMarketsAsync("USD", coinGeckoConversionCoins);
+                foreach(var market in markets.Data)
+                {
+                    if(!marketValues.ContainsKey(market.Id))
+                    {
+                        marketValues.Add(market.Id, market.CurrentPrice);
+                    }
+                }
+            }
+
+            if(xeggexConversionCoins.Any())
+            {
+                //lookup prices on xeggex
+                foreach(var market in xeggexConversionCoins)
+                {
+                    var marketClient = new RestSharp.RestClient("https://api.xeggex.com");
+                    var marketRequest = new RestRequest(String.Format("/api/v2/market/getbysymbol/{0}", market));
+                    var marketResponse = marketClient.Get(marketRequest);
+                    dynamic marketResponseData = JsonConvert.DeserializeObject(marketResponse.Content);
+                    var lastPrice = Convert.ToDecimal(marketResponseData.lastPrice);
+                    if(!marketValues.ContainsKey(market))
+                    {
+                        marketValues.Add(market, lastPrice);
+                    }
+                }
+            }
+
+            if(bitcointryConversionCoins.Any())
+            {
+                foreach(var market in bitcointryConversionCoins)
+                {
+                    var marketClient = new RestSharp.RestClient("https://api.bitcointry.com");
+                    var marketRequest = new RestRequest(String.Format("/api/v2/ticker?pair={0}", market));
+                    var marketResponse = marketClient.Get(marketRequest);
+                    dynamic marketResponseData = JsonConvert.DeserializeObject(marketResponse.Content);
+                    if(marketResponseData != null && marketResponseData[market] != null)
+                    {
+                        var lastPrice = Convert.ToDecimal(marketResponseData[market].last_price);
+                        if(!marketValues.ContainsKey(market))
+                        {
+                            marketValues.Add(market, lastPrice);
+                        }
+                    }
+                }
+            }
+
+            var amConf = new MapperConfiguration(cfg => { cfg.AddProfile(new AutoMapperProfile()); });
+            IMinerRepository minerRepo = new MinerRepository(amConf.CreateMapper());
+
+            foreach(var balance in poolBalancesOverMinimum)
+            {
+                var minerSetting = await cf.Run(con => minerRepo.GetSettingsAsync(con, null, config.Id, balance.Address));
+                if(
+                    minerSetting != null &&
+                    minerSetting.AutoConversionEnabled &&
+                    !String.IsNullOrEmpty(minerSetting.AutoConversionDestination) &&
+                    !String.IsNullOrEmpty(minerSetting.AutoConversionDestinationAddress)
+                    )
+                {
+                    var destinationPoolConfig = clusterConfig.Pools.Where(x => x.Id == minerSetting.AutoConversionDestination && x.PaymentProcessing.AutoExchangingToEnabled).FirstOrDefault();
+                    if(destinationPoolConfig != null)
+                    {
+                        var destinationTicker = destinationPoolConfig.Template.Symbol;
+                        var sourceTicker = config.Template.Symbol;
+
+                        var sourceSlug = config.Template.MarketSlug;
+                        var destinationSlug = destinationPoolConfig.Template.MarketSlug;
+
+                        var sourceMarketPrice = marketValues.ContainsKey(sourceSlug) ? marketValues[sourceSlug] : 0;
+                        var destinationMarketPrice = marketValues.ContainsKey(destinationSlug) ? marketValues[destinationSlug] : 0;
+
+                        if(sourceMarketPrice > 0 && destinationMarketPrice > 0)
+                        {
+                            var processingBalance = balance.Amount;
+                            if(config.PaymentProcessing.AutoExchangingFee > 0)
+                            {
+                                processingBalance = processingBalance - (processingBalance * (config.PaymentProcessing.AutoExchangingFee / 100m));
+                            }
+                            var exchangeRate = sourceMarketPrice / destinationMarketPrice;
+                            var destinationAmount = processingBalance * exchangeRate;
+
+                            if(destinationAmount > 0)
+                            {
+                                //Credit Destination coin (minus fee)
+                                string balanceChangeMessage = String.Format("Crediting Auto Conversion: Converted {0} {1} to {2} {3}", Convert.ToDouble(processingBalance), config.Template.Symbol, Math.Round(Convert.ToDouble(destinationAmount), 8), destinationPoolConfig.Template.Symbol);
+                                await cf.Run(con => balanceRepo.AddAmountAsync(con, null, destinationPoolConfig.Id, minerSetting.AutoConversionDestinationAddress, destinationAmount, balanceChangeMessage));
+
+                                //Debit Source coin
+                                balanceChangeMessage = String.Format("Debiting Auto Conversion: Converted {0} {1} to {2} {3}", Convert.ToDouble(processingBalance), config.Template.Symbol, Math.Round(Convert.ToDouble(destinationAmount), 8), destinationPoolConfig.Template.Symbol);
+                                await cf.Run(con => balanceRepo.AddAmountAsync(con, null, config.Id, balance.Address, -balance.Amount, balanceChangeMessage));
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        poolBalancesOverMinimum = await cf.Run(con =>
             balanceRepo.GetPoolBalancesOverThresholdAsync(con, config.Id, config.PaymentProcessing.MinimumPayment));
 
         if(poolBalancesOverMinimum.Length > 0)
@@ -256,15 +376,15 @@ public class PayoutManager : BackgroundService
         var from = DateTime.MinValue;
         var to = block.Created;
 
-        var miner = block.Miner;
+	var miner = block.Miner;
 
-        // get last block for pool even for "MinerEffort". We use the same method as pool effort because adding miner address in the equation will just create an overlap in the final calculationMore actions
-        var lastBlock = await cf.Run(con => blockRepo.GetBlockBeforeAsync(con, poolConfig.Id, new[]
+        // get last block for pool
+        var lastBlock = await cf.Run(con => blockRepo.GetMinerBlockBeforeAsync(con, poolConfig.Id, miner, new[]
         {
             BlockStatus.Confirmed,
             BlockStatus.Orphaned,
             BlockStatus.Pending,
-        }, block.Created));
+        }, block.Created, ct));
 
         if(lastBlock != null)
             from = lastBlock.Created;

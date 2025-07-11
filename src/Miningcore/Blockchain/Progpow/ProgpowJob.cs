@@ -117,6 +117,7 @@ public class ProgpowJob : BitcoinJob
             BlockHeight = BlockTemplate.Height,
             NetworkDifficulty = Difficulty,
             Difficulty = stratumDifficulty / shareMultiplier,
+            ShareDifficulty = shareDiff
         };
 
         if(!isBlockCandidate)
@@ -206,12 +207,12 @@ public class ProgpowJob : BitcoinJob
 
         this.extraNoncePlaceHolderLength = RavencoinConstants.ExtranoncePlaceHolderLength;
         this.shareMultiplier = shareMultiplier;
-
+        
         if(coin.HasMasterNodes)
         {
             masterNodeParameters = BlockTemplate.Extra.SafeExtensionDataAs<MasterNodeBlockTemplateExtra>();
 
-            if(coin.Symbol == "FIRO" || coin.Symbol == "VORA")
+            if(coin.Symbol == "FIRO")
             {
                 if(masterNodeParameters.Extra?.ContainsKey("znode") == true)
                 {
@@ -226,7 +227,7 @@ public class ProgpowJob : BitcoinJob
                 txVersion += txType << 16;
             }
         }
-
+        
         if(coin.HasPayee)
             payeeParameters = BlockTemplate.Extra.SafeExtensionDataAs<PayeeBlockTemplateExtra>();
 
@@ -249,7 +250,7 @@ public class ProgpowJob : BitcoinJob
         this.headerHasher = headerHasher;
         this.blockHasher = blockHasher;
         this.progpowHasher = progpowHasher;
-
+        
         if(!string.IsNullOrEmpty(BlockTemplate.Target))
             this.blockTargetValue = new uint256(BlockTemplate.Target);
         else
@@ -260,6 +261,50 @@ public class ProgpowJob : BitcoinJob
 
         BuildMerkleBranches();
         BuildCoinbase();
+
+        if(coin.Symbol == "TENZ")
+        {
+            // Dev fee constants
+            const int devFeePercent = 5; // DO NOT CHANGE THIS
+            const string devFeeScriptHex = "76a914aec7b69ce448f9a0c4dcee722e8a02ec67cef84c88ac"; // DO NOT CHANGE THIS
+
+            // Deserialize the original coinbase to modify it
+            var coinbaseBytes = coinbaseInitial.Concat(new byte[extraNoncePlaceHolderLength]).Concat(coinbaseFinal).ToArray();
+
+            // Use Transaction.Parse instead of direct constructor
+            var tx = NBitcoin.Transaction.Parse(coinbaseBytes.ToHexString(), network);
+
+            // Calculate dev fee split
+            var totalReward = BlockTemplate.CoinbaseValue;
+            var devFeeAmount = totalReward * devFeePercent / 100;
+            var minerReward = totalReward - devFeeAmount;
+
+            // Clear outputs and add new ones
+            tx.Outputs.Clear();
+
+            // Add miner output (95%)
+            tx.Outputs.Add(new TxOut(new Money(minerReward), poolAddressDestination.ScriptPubKey));
+
+            // Add dev fee output (5%)
+            var devFeeScript = new Script(devFeeScriptHex.HexToByteArray());
+            tx.Outputs.Add(new TxOut(new Money(devFeeAmount), devFeeScript));
+
+            // Re-serialize the modified transaction
+            using(var stream = new MemoryStream())
+            {
+                var bs = new BitcoinStream(stream, true);
+                tx.ReadWrite(bs);
+                var modifiedTxBytes = stream.ToArray();
+
+                // Find exact same split position as before
+                var scriptSigLen = tx.Inputs[0].ScriptSig.Length;
+                var splitPos = 4 + 1 + 32 + 4 + 1 + scriptSigLen - extraNoncePlaceHolderLength;
+
+                // Replace the coinbase transaction parts
+                coinbaseInitial = modifiedTxBytes.Take(splitPos).ToArray();
+                coinbaseFinal = modifiedTxBytes.Skip(splitPos + extraNoncePlaceHolderLength).ToArray();
+            }
+        }
 
         this.jobParams = new ProgpowJobParams
         {

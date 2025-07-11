@@ -71,7 +71,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "xelisv2.h"
 #include "x11kvs.h"
 #include "argon2d.h"
-#include "evohash.h"
 
 #ifdef _WIN32
 #include "blake2/ref/blake2.h"
@@ -442,7 +441,7 @@ extern "C" MODULE_API void yespower_export(const char *input, char *output, uint
     yespower_hash(input, output, input_len);
 }
 
-extern "C" MODULE_API void yespowerADVC_export(const char *input, char *output, uint32_t input_len)
+extern "C" MODULE_API void yespowerADVC_export(const char* input, char* output, uint32_t input_len)
 {
     yespowerADVC_hash(input, output, input_len);
 }
@@ -515,9 +514,4 @@ extern "C" MODULE_API void argon2d1000_export(const char* input, char* output, u
 extern "C" MODULE_API void argon2d16000_export(const char* input, char* output, uint32_t input_len)
 {
 	argon2d16000_hash(input, output, input_len);
-}
-
-extern "C" MODULE_API void evohash_export(const char* input, char* output, uint32_t input_len)
-{
-	evohash_hash(input, output, input_len);
 }

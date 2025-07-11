@@ -467,6 +467,7 @@ public class BitcoinJob
             BlockHeight = BlockTemplate.Height,
             NetworkDifficulty = Difficulty,
             Difficulty = stratumDifficulty / shareMultiplier,
+            ShareDifficulty = shareDiff
         };
 
         if(isBlockCandidate)
@@ -572,12 +573,23 @@ public class BitcoinJob
             {
                 foreach(var masterNode in masternodes)
                 {
-                    if(!string.IsNullOrEmpty(masterNode.Payee))
-                    {
-                        var payeeDestination = BitcoinUtils.AddressToDestination(masterNode.Payee, network);
+                    if(masterNode.Amount > 0)
+                    {                      
                         var payeeReward = masterNode.Amount;
 
-                        tx.Outputs.Add(payeeReward, payeeDestination);
+                        //DASH blocks require a OP_RETURN Burn with no payee address
+                        if(String.IsNullOrEmpty(masterNode.Payee) && masterNode.Script=="6a")
+                        {
+                            var opReturn = new Script() + OpcodeType.OP_RETURN;
+                            var opReturnTx = new TxOut(masterNode.Amount, opReturn);
+                            tx.Outputs.Add(opReturnTx);
+                        }
+                        else
+                        {
+                            var payeeDestination = BitcoinUtils.AddressToDestination(masterNode.Payee, network);
+                            tx.Outputs.Add(payeeReward, payeeDestination);
+                        }
+                        
                         reward -= payeeReward;
                     }
                 }

@@ -7,6 +7,7 @@ using Miningcore.Extensions;
 using Miningcore.Stratum;
 using System.Numerics;
 using NBitcoin;
+using Miningcore.Util;
 
 namespace Miningcore.Blockchain.Ergo;
 
@@ -167,7 +168,7 @@ public class ErgoJob
         {
             BlockHeight = Height,
             NetworkDifficulty = Difficulty,
-            Difficulty = stratumDifficulty / ErgoConstants.ShareMultiplier
+            Difficulty = stratumDifficulty / ErgoConstants.ShareMultiplier,
         };
 
         if(isBlockCandidate)

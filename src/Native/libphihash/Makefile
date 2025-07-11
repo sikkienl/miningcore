@@ -3,7 +3,7 @@ CXXFLAGS += -g -Wall -fPIC -fpermissive -O2 -Wno-char-subscripts -Wno-unused-var
 LDFLAGS += -shared
 TARGET = libphihash.so
 
-OBJECTS = ethash/ethash.o keccak/keccak.o keccak/keccakf800.o keccak/keccakf1600.o ethash/managed.o ethash/primes.o ethash/phihash.o exports.o
+OBJECTS = ethash/ethash.o keccak/keccak.o keccak/keccakf800.o keccak/keccakf1600.o ethash/managed.o ethash/primes.o ethash/phihash.o
 
 all: $(TARGET)
 

@@ -94,6 +94,18 @@ public abstract partial class CoinTemplate
     [JsonProperty(Order = -9)]
     public string Market { get; set; }
 
+    /// <summary>
+    /// Market Slug - Used to Get Exchange Rate
+    /// </summary>
+    [JsonProperty(Order = -9)]
+    public string MarketSlug { get; set; }
+
+    /// <summary>
+    /// Market Source - Used to Get Exchange Rate
+    /// </summary>
+    [JsonConverter(typeof(StringEnumConverter), true)]
+    [JsonProperty(Order = -9)]
+    public MarketProvider MarketProvider { get; set; }
 
     /// <summary>
     /// Family
@@ -181,6 +193,21 @@ public partial class AlephiumCoinTemplate : CoinTemplate
 
 public partial class BeamCoinTemplate : CoinTemplate
 {
+}
+
+public enum MarketProvider
+{
+    [EnumMember(Value = "")]
+    None,
+
+    [EnumMember(Value = "coingecko")]
+    CoinGecko,
+
+    [EnumMember(Value = "xeggex")]
+    Xeggex,
+
+    [EnumMember(Value ="bitcointry")]
+    Bitcointry
 }
 
 public enum BitcoinSubfamily
@@ -1116,6 +1143,10 @@ public partial class PoolPaymentProcessingConfig
     public decimal MinimumPayment { get; set; } // in pool-base-currency (ie. Bitcoin, not Satoshis)
     public PayoutScheme PayoutScheme { get; set; }
     public JToken PayoutSchemeConfig { get; set; }
+    public int? ProcessingBlockLimit { get; set; }
+    public bool AutoExchangingFromEnabled { get; set; }
+    public bool AutoExchangingToEnabled { get; set; }
+    public decimal AutoExchangingFee { get; set; }
 
     /// <summary>
     /// Arbitrary extension data
@@ -1344,6 +1375,7 @@ public partial class PoolConfig
     public int ClientConnectionTimeout { get; set; }
     public int JobRebroadcastTimeout { get; set; }
     public int BlockRefreshInterval { get; set; }
+    public decimal MinerBonusPercentage { get; set; }
 
     /// <summary>
     /// If true, internal stratum ports are not initialized
