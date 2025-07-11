@@ -347,7 +347,9 @@
         "coinbaseIgnoreAuxFlags": true,
         "explorerBlockLink": "https://www.blockchain.com/btc/block/$hash$",
         "explorerTxLink": "https://www.blockchain.com/btc/tx/{0}",
-        "explorerAccountLink": "https://www.blockchain.com/btc/address/{0}"
+        "explorerAccountLink": "https://www.blockchain.com/btc/address/{0}",
+        "marketSlug": "bitcoin",
+        "marketProvider": "coingecko"
     },
     "bitcoin-cash": {
         "name": "Bitcoin Cash",
@@ -375,7 +377,9 @@
         },
         "explorerBlockLink": "https://bchblockexplorer.com/block/$height$",
         "explorerTxLink": "https://bchblockexplorer.com/tx/{0}",
-        "explorerAccountLink": "https://bchblockexplorer.com/address/{0}"
+        "explorerAccountLink": "https://bchblockexplorer.com/address/{0}",
+        "marketSlug": "bitcoin-cash",
+        "marketProvider": "coingecko"
     },
     "bitcoin-diamond": {
         "name": "Bitcoin Diamond",
@@ -799,7 +803,9 @@
         "hasMasterNodes": true,
         "explorerBlockLink": "https://chainz.cryptoid.info/dash/block.dws?$height$.htm",
         "explorerTxLink": "https://chainz.cryptoid.info/dash/tx.dws?{0}.htm",
-        "explorerAccountLink": "https://chainz.cryptoid.info/dash/address.dws?{0}.htm"
+        "explorerAccountLink": "https://chainz.cryptoid.info/dash/address.dws?{0}.htm",
+        "marketSlug": "dash",
+        "marketProvider": "coingecko"
     },
     "digibyte-sha256": {
         "name": "Digibyte Sha256",
@@ -830,7 +836,9 @@
         ],
         "explorerBlockLink": "https://chainz.cryptoid.info/dgb/block.dws?$height$.htm",
         "explorerTxLink": "https://chainz.cryptoid.info/dgb/tx.dws?{0}.htm",
-        "explorerAccountLink": "https://chainz.cryptoid.info/dgb/address.dws?{0}.htm"
+        "explorerAccountLink": "https://chainz.cryptoid.info/dgb/address.dws?{0}.htm",
+        "marketSlug": "digibyte",
+        "marketProvider": "coingecko"
     },
     "digibyte-scrypt": {
         "name": "Digibyte Scrypt",
@@ -866,7 +874,9 @@
         ],
         "explorerBlockLink": "https://chainz.cryptoid.info/dgb/block.dws?$height$.htm",
         "explorerTxLink": "https://chainz.cryptoid.info/dgb/tx.dws?{0}.htm",
-        "explorerAccountLink": "https://chainz.cryptoid.info/dgb/address.dws?{0}.htm"
+        "explorerAccountLink": "https://chainz.cryptoid.info/dgb/address.dws?{0}.htm",
+        "marketSlug": "digibyte",
+        "marketProvider": "coingecko"
     },
     "digibyte-skein": {
         "name": "Digibyte Skein",
@@ -897,7 +907,9 @@
         ],
         "explorerBlockLink": "https://chainz.cryptoid.info/dgb/block.dws?$height$.htm",
         "explorerTxLink": "https://chainz.cryptoid.info/dgb/tx.dws?{0}.htm",
-        "explorerAccountLink": "https://chainz.cryptoid.info/dgb/address.dws?{0}.htm"
+        "explorerAccountLink": "https://chainz.cryptoid.info/dgb/address.dws?{0}.htm",
+        "marketSlug": "digibyte",
+        "marketProvider": "coingecko"
     },
     "digibyte-qubit": {
         "name": "Digibyte Qubit",
@@ -928,7 +940,9 @@
         ],
         "explorerBlockLink": "https://chainz.cryptoid.info/dgb/block.dws?$height$.htm",
         "explorerTxLink": "https://chainz.cryptoid.info/dgb/tx.dws?{0}.htm",
-        "explorerAccountLink": "https://chainz.cryptoid.info/dgb/address.dws?{0}.htm"
+        "explorerAccountLink": "https://chainz.cryptoid.info/dgb/address.dws?{0}.htm",
+        "marketSlug": "digibyte",
+        "marketProvider": "coingecko"
     },
     "digibyte-groestl": {
         "name": "Digibyte Groestl",
@@ -960,7 +974,9 @@
         ],
         "explorerBlockLink": "https://chainz.cryptoid.info/dgb/block.dws?$height$.htm",
         "explorerTxLink": "https://chainz.cryptoid.info/dgb/tx.dws?{0}.htm",
-        "explorerAccountLink": "https://chainz.cryptoid.info/dgb/address.dws?{0}.htm"
+        "explorerAccountLink": "https://chainz.cryptoid.info/dgb/address.dws?{0}.htm",
+        "marketSlug": "digibyte",
+        "marketProvider": "coingecko"
     },
     "dogecoin": {
         "name": "Dogecoin",
@@ -994,7 +1010,9 @@
         "coinbaseMinConfimations": 251,
         "explorerBlockLink": "https://dogechain.info/block/$height$",
         "explorerTxLink": "https://dogechain.info/tx/{0}",
-        "explorerAccountLink": "https://dogechain.info/address/{0}"
+        "explorerAccountLink": "https://dogechain.info/address/{0}",
+        "marketSlug": "dogecoin",
+        "marketProvider": "coingecko"
     },
     "ecash": {
         "name": "eCash",
@@ -1112,7 +1130,9 @@
         "hasCoinbasePayload": true,
         "explorerBlockLink": "https://explorer.ergon.network/block.dws?$height$.htm",
         "explorerTxLink": "https://explorer.ergon.network/tx.dws?{0}.htm",
-        "explorerAccountLink": "https://explorer.ergon.network/address.dws?{0}.htm"
+        "explorerAccountLink": "https://explorer.ergon.network/address.dws?{0}.htm",
+        "marketSlug": "XRG_USDT",
+        "marketProvider": "coingecko"
     },
     "etitanium": {
         "name": "eTitanium ",
@@ -1141,38 +1161,6 @@
         "explorerBlockLink": "https://explorer.etitanium.net/block/$hash$",
         "explorerTxLink": "https://explorer.etitanium.net/tx/{0}",
         "explorerAccountLink": "https://explorer.etitanium.net/address/{0}"
-    },
-    "evoai": {
-        "name": "EvoAI",
-        "canonicalName": "EvoAI",
-        "symbol": "EVO",
-        "family": "bitcoin",
-        "website": "https://evoai.top/",
-        "github": "https://github.com/evoai-team/evo",
-        "explorer": "https://explorer.evoai.top/",
-        "twitter": "",
-        "telegram": "https://t.me/+oLGorom06EllYzk1",
-        "discord": "https://discord.gg/9ucxz92SXN",
-        "coinbaseHasher": {
-            "hash": "sha256d"
-        },
-        "headerHasher": {
-            "hash": "evohash"
-        },
-        "blockHasher": {
-            "hash": "reverse",
-            "args": [
-                {
-                    "hash": "evohash"
-                }
-            ]
-        },
-        "coinbaseTxVersion": 8,
-        "coinbaseMinConfimations": 51,
-        "shareMultiplier": 256,
-        "explorerBlockLink": "https://explorer.evoai.top/block/$hash$",
-        "explorerTxLink": "https://explorer.evoai.top/tx/{0}",
-        "explorerAccountLink": "https://explorer.evoai.top/address/{0}"
     },
     "exosis": {
         "name": "Exosis",
@@ -1474,10 +1462,12 @@
                 }
             ]
         },
-        "shareMultiplier": 4096,
-        "explorerBlockLink": "https://groestlsight.groestlcoin.org/block/$height$",
-        "explorerTxLink": "https://groestlsight.groestlcoin.org/tx/{0}",
-        "explorerAccountLink": "https://groestlsight.groestlcoin.org/address/{0}"
+        "shareMultiplier": 256,
+        "explorerBlockLink": "https://chainz.cryptoid.info/grs/block.dws?$height$.htm",
+        "explorerTxLink": "https://chainz.cryptoid.info/grs/tx.dws?{0}.htm",
+        "explorerAccountLink": "https://chainz.cryptoid.info/grs/address.dws?{0}.htm",
+        "marketSlug": "groestlcoin",
+        "marketProvider": "coingecko"
     },
     "handshake": {
         "name": "Handshake",
@@ -1749,7 +1739,9 @@
         "shareMultiplier": 65536,
         "explorerBlockLink": "https://chainz.cryptoid.info/ltc/block.dws?$height$.htm",
         "explorerTxLink": "https://chainz.cryptoid.info/ltc/tx.dws?{0}.htm",
-        "explorerAccountLink": "https://chainz.cryptoid.info/ltc/address.dws?{0}.htm"
+        "explorerAccountLink": "https://chainz.cryptoid.info/ltc/address.dws?{0}.htm",
+        "marketSlug": "litecoin",
+        "marketProvider": "coingecko"
     },
     "litecoin-cash": {
         "name": "Litecoin Cash",
@@ -2126,7 +2118,41 @@
         "explorerTxLink": "https://openchains.info/coin/ntbc/tx/{0}",
         "explorerAccountLink": "https://openchains.info/coin/ntbc/address/{0}"
     },
-    "opticalbitcoin": {
+    "neobytes": {
+        "name": "Neobytes",
+        "symbol": "NBY",
+        "family": "bitcoin",
+        "website": "https://neobytes.network",
+        "market": "",
+        "twitter": "https://x.com/neobytesnetwork",
+        "telegram": "https://t.me/neobytesnetwork",
+        "discord": "https://discord.gg/kQc7pjvMfn",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "neoscrypt",
+            "args": [
+                0
+            ]
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "neoscrypt",
+                    "args": [
+                        0
+                    ]
+                }
+            ]
+        },
+        "shareMultiplier": 65536,
+        "explorerBlockLink": "https://explorer.neobytes.network/block/$height$",
+        "explorerTxLink": "https://explorer.neobytes.network/tx/{0}",
+        "explorerAccountLink": "https://explorer.neobytes.network/address/{0}"
+    },
+        "opticalbitcoin": {
         "name": "Optical BTC",
         "symbol": "OBTC",
         "family": "bitcoin",
@@ -2638,38 +2664,6 @@
         "explorerTxLink": "https://rin-explorer.coin-miners.info/tx/{0}",
         "explorerAccountLink": "https://rin-explorer.coin-miners.info/address/{0}"
     },
-    "adventurecoin": {
-        "name": "AdventureCoin",
-        "canonicalName": "AdventureCoin",
-        "symbol": "ADVC",
-        "family": "bitcoin",
-        "website": "https://www.adventurecoin.quest/",
-        "github": "https://github.com/AdventureCoin-ADVC/AdventureCoin",
-        "explorer": "http://178.156.175.223:8080/#/",
-        "twitter": "https://x.com/AdventureCoinAD",
-        "telegram": "https://t.me/AdventureCoinADVC",
-        "discord": "https://discord.gg/xNJJXqKp3T",
-        "coinbaseHasher": {
-            "hash": "sha256d"
-        },
-        "headerHasher": {
-            "hash": "yespoweradvc"
-        },
-        "blockHasher": {
-            "hash": "reverse",
-            "args": [
-                {
-                    "hash": "sha256d"
-                }
-            ]
-        },
-        "hasDeveloper": true,
-        "shareMultiplier": 65536,
-        "coinbaseMinConfimations": 30,
-        "explorerBlockLink": "http://178.156.175.223:8080/#/block/$hash$",
-        "explorerTxLink": "http://178.156.175.223:8080/#/transaction/{0}",
-        "explorerAccountLink": "http://178.156.175.223:8080/#/address/{0}"
-    },
     "akitacoin": {
         "name": "Akitacoin",
         "symbol": "AKIC",
@@ -2830,42 +2824,13 @@
         "explorerTxLink": "https://fewbit.online/tx/{0}",
         "explorerAccountLink": "https://fewbit.online/address/{0}"
     },
-    "lightningcashr": {
-        "name": "LightningCash-R",
-        "canonicalName": "LightningCash-R",
-        "symbol": "LNCR",
-        "family": "bitcoin",
-        "website": "https://lightningcash-reborn.space/",
-        "github": "https://github.com/MerlinMagic2018/LightningCash-R",
-        "twitter": "",
-        "market": "https://coinpaprika.com/coin/lncr-lightningcash-reborn/",
-        "discord": "https://discord.com/invite/WrMVXcA8bt",
-        "coinbaseHasher": {
-            "hash": "sha256d"
-        },
-        "headerHasher": {
-            "hash": "yespowerltncg"
-        },
-        "blockHasher": {
-            "hash": "reverse",
-            "args": [
-                {
-                    "hash": "sha256d"
-                }
-            ]
-        },
-        "shareMultiplier": 65536,
-        "explorerBlockLink": "https://explorer.lightningcash-reborn.space/block/$height$",
-        "explorerTxLink": "https://explorer.lightningcash-reborn.space/tx/{0}",
-        "explorerAccountLink": "https://explorer.lightningcash-reborn.space/address/{0}"
-    },
     "ravencash": {
         "name": "Ravencash",
         "symbol": "RVH",
         "family": "progpow",
         "progpower": "kawpow",
         "website": "https://ravencash.net/",
-		"github": "https://github.com/ravencash-net/ravencash",
+        "github": "https://github.com/ravencash-net/ravencash",
         "market": "",
         "twitter": "https://x.com/ravencash_net",
         "telegram": "",
@@ -2887,7 +2852,7 @@
         "shareMultiplier": 1,
         "hasFounderFee": true,
         "hasMasterNodes": true,
-		"hasSmartNodes": true,
+        "hasSmartNodes": true,
         "explorerBlockLink": "https://explorer.ravencash.net/block/$hash$",
         "explorerTxLink": "https://explorer.ravencash.net/tx/{0}",
         "explorerAccountLink": "https://explorer.ravencash.net/address/{0}"
@@ -2920,6 +2885,36 @@
         "explorerBlockLink": "https://ravencoin.network/rvn/block/$hash$",
         "explorerTxLink": "https://ravencoin.network/rvn/transaction/{0}",
         "explorerAccountLink": "https://ravencoin.network/rvn/address/{0}"
+    },
+
+    "tenzura": {
+        "name": "Tenzura",
+        "symbol": "TENZ",
+        "family": "progpow",
+        "website": "https://www.tenzura.io/",
+        "market": "https://coinmarketcap.com/currencies/tenzura/",
+        "twitter": "https://x.com/tenzura_io",
+        "github": "https://github.com/Tenzura/Tenzura",
+        "discord": "https://discord.gg/S9kefr94eW",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "sha256d"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "shareMultiplier": 1,
+        "progpower": "kawpow",
+        "explorerBlockLink": "https://explorer.tenzura.io/block/$hash$",
+        "explorerTxLink": "https://explorer.tenzura.io/tx/{0}",
+        "explorerAccountLink": "https://explorer.tenzura.io/address/{0}"
     },
     "firo": {
         "name": "Firo",
@@ -3050,38 +3045,6 @@
         "explorerTxLink": "https://explorer.phicoin.net/tx/{0}",
         "explorerAccountLink": "https://explorer.phicoin.net/address/{0}"
     },
-    "privora": {
-        "name": "Privora",
-        "symbol": "VORA",
-        "family": "progpow",
-        "progpower": "firopow",
-        "website": "https://privora.org/",
-        "github": "https://github.com/PrivoraCore/Privora",
-        "market": "",
-        "twitter": "",
-        "telegram": "https://t.me/PrivoraTM",
-        "discord": "https://discord.gg/4AM5SUVzgs",
-        "coinbaseHasher": {
-            "hash": "sha256d"
-        },
-        "headerHasher": {
-            "hash": "sha256d"
-        },
-        "blockHasher": {
-            "hash": "reverse",
-            "args": [
-                {
-                    "hash": "sha256d"
-                }
-            ]
-        },
-        "hasFounderFee": true,
-        "hasMasterNodes": true,
-        "shareMultiplier": 1,
-        "explorerBlockLink": "https://explorer.privora.org/block/$hash$",
-        "explorerTxLink": "https://explorer.privora.org/tx/{0}",
-        "explorerAccountLink": "https://explorer.privora.org/address/{0}"
-    },
     "telestai": {
         "name": "Telestai",
         "symbol": "TLS",
@@ -3139,7 +3102,9 @@
         "progpower": "kawpow",
         "explorerBlockLink": "https://explorer.neurai.org/block/$hash$",
         "explorerTxLink": "https://explorer.neurai.org/tx/{0}",
-        "explorerAccountLink": "https://explorer.neurai.org/address/{0}"
+        "explorerAccountLink": "https://explorer.neurai.org/address/{0}",
+        "marketSlug": "neurai",
+        "marketProvider": "coingecko"
     },
     "clore": {
         "name": "Clore",
@@ -3379,22 +3344,22 @@
         "explorerAccountLink": "https://explorer.joss.network/address/{0}"
     },
     "novo": {
-      "name": "Novo",
-      "symbol": "NOVO",
-      "family": "bitcoin",
-      "coinbaseHasher": {
-        "hash": "sha256d"
-      },
-      "headerHasher": {
-        "hash": "sha256dt"
-      },
-      "blockHasher": {
-        "hash": "reverse",
-        "args": [ { "hash": "sha256dt" } ]
-      },
-      "explorerBlockLink": "https://explorer.novochain.ovh/block/$height$",
-      "explorerTxLink": "https://explorer.novochain.ovh/tx/{0}",
-      "explorerAccountLink": "https://explorer.novochain.ovh/address/{0}"
+        "name": "Novo",
+        "symbol": "NOVO",
+        "family": "bitcoin",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "sha256dt"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [ { "hash": "sha256dt" } ]
+        },
+        "explorerBlockLink": "https://explorer.novochain.ovh/block/$height$",
+        "explorerTxLink": "https://explorer.novochain.ovh/tx/{0}",
+        "explorerAccountLink": "https://explorer.novochain.ovh/address/{0}"
     },
     "ogva": {
         "name": "OGVA Network",
@@ -3622,7 +3587,7 @@
         },
         "hasFounderFee": true,
         "hasMasterNodes": true,
-		"hasSmartNodes": true,
+        "hasSmartNodes": true,
         "shareMultiplier": 65536,
         "explorerBlockLink": "http://explorer.fuertecoin.network:3001/block/$hash$",
         "explorerTxLink": "http://explorer.fuertecoin.network:3001/tx/{0}",
@@ -4618,7 +4583,9 @@
         "shareMultiplier": 256,
         "explorerBlockLink": "https://chainz.cryptoid.info/vtc/block.dws?$height$.htm",
         "explorerTxLink": "https://chainz.cryptoid.info/vtc/tx.dws?{0}.htm",
-        "explorerAccountLink": "https://chainz.cryptoid.info/vtc/address.dws?{0}.htm"
+        "explorerAccountLink": "https://chainz.cryptoid.info/vtc/address.dws?{0}.htm",
+        "marketSlug": "vertcoin",
+        "marketProvider": "coingecko"
     },
     "viacoin": {
         "name": "Viacoin",
@@ -6023,7 +5990,7 @@
         "smallestUnit": 1000000000,
         "addressPrefix": 504557,
         "addressPrefixStagenet": 26605,
-        "addressPrefixTestnet":  15501,
+        "addressPrefixTestnet": 15501,
         "addressPrefixIntegrated": 1848045,
         "addressPrefixIntegratedStagenet": 911341,
         "addressPrefixIntegratedTestnet": 292644,
@@ -6034,7 +6001,7 @@
         "explorerBlockLink": "https://explorer.gntl.cash/block/$hash$",
         "explorerTxLink": "https://explorer.gntl.cash/tx/{0}"
     },
-     "conceal": {
+    "conceal": {
         "name": "Conceal",
         "canonicalName": "Conceal",
         "symbol": "CCX",
@@ -6136,7 +6103,7 @@
         "explorerBlockLink": "https://explorer.zephyrprotocol.com/block/$height$",
         "explorerTxLink": "https://explorer.zephyrprotocol.com/tx/{0}"
     },
-     "zano": {
+    "zano": {
         "name": "Zano",
         "canonicalName": "Zano",
         "symbol": "ZANO",
@@ -6273,7 +6240,7 @@
         "explorerAccountLink": "https://blockscout.etherone.one/address/{0}",
         "ethasher": "ethash"
     },
-	"octaspace": {
+    "octaspace": {
         "name": "OctaSpace",
         "canonicalName": "Octa.Space",
         "symbol": "OCTA",
@@ -6389,7 +6356,9 @@
         "addressBech32PrefixTestnet": "astrixtest",
         "explorerBlockLink": "https://explorer.astrix-network.com/blocks/$hash$",
         "explorerTxLink": "https://explorer.astrix-network.com/txs/{0}",
-        "explorerAccountLink": "https://explorer.astrix-network.com/addresses/{0}"
+        "explorerAccountLink": "https://explorer.astrix-network.com/addresses/{0}",
+        "marketSlug": "AIX_USDT",
+        "marketProvider": "coingecko"
     },
     "bitmeme": {
         "name": "Bitmeme",
@@ -6678,7 +6647,9 @@
         "addressBech32PrefixTestnet": "waglaylatest",
         "explorerBlockLink": "https://explorer.waglayla.com/blocks/$hash$",
         "explorerTxLink": "https://explorer.waglayla.com/txs/{0}",
-        "explorerAccountLink": "https://explorer.waglayla.com/addresses/{0}"
+        "explorerAccountLink": "https://explorer.waglayla.com/addresses/{0}",
+        "marketSlug": "wala_USDT",
+        "marketProvider": "bitcointry"
     },
     "warthog": {
         "name": "Warthog Network",
@@ -6725,5 +6696,96 @@
         "explorerBlockLink": "https://explorer.cryptix-network.org/blocks/$hash$",
         "explorerTxLink": "https://explorer.cryptix-network.org/txs/{0}",
         "explorerAccountLink": "https://explorer.cryptix-network.org/addresses/{0}"
+    },
+    "adventurecoin": {
+        "name": "AdventureCoin",
+        "canonicalName": "AdventureCoin",
+        "symbol": "ADVC",
+        "family": "bitcoin",
+        "website": "https://www.adventurecoin.quest/",
+        "github": "https://github.com/AdventureCoin-ADVC/AdventureCoin",
+        "twitter": "https://x.com/AdventureCoinAD",
+        "telegram": "https://t.me/AdventureCoinADVC",
+        "discord": "https://discord.gg/xNJJXqKp3T",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "yespoweradvc"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "hasDeveloper": true,
+        "shareMultiplier": 65536,
+        "coinbaseMinConfimations": 30,
+        "explorerBlockLink": "https://explorer.adventurecoin.quest/block/$hash$",
+        "explorerTxLink": "https://explorer.adventurecoin.quest/tx/{0}",
+        "explorerAccountLink": "https://explorer.adventurecoin.quest/address/{0}"
+    },
+    "pepehash": {
+        "name": "Pepehash",
+        "canonicalName": "Pepehash",
+        "symbol": "PPH",
+        "family": "bitcoin",
+        "website": "",
+        "market": "",
+        "twitter": "",
+        "telegram": "",
+        "discord": "",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "sha256d"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "sha256d"
+                }
+            ]
+        },
+        "hasCoinbasePayload": true,
+        "explorerBlockLink": "",
+        "explorerTxLink": "",
+        "explorerAccountLink": ""
+    },
+    "pigeoncoin": {
+        "name": "Pigeoncoin",
+        "symbol": "PGN",
+        "family": "bitcoin",
+        "website": "https://pigeoncoin.org/",
+        "market": "https://coinmarketcap.com/currencies/pigeoncoin",
+        "twitter": "https://twitter.com/Pigeoncoin",
+        "telegram": "https://t.me/Pigeoncoin",
+        "discord": "https://discord.gg/SZcf63h",
+        "coinbaseHasher": {
+            "hash": "sha256d"
+        },
+        "headerHasher": {
+            "hash": "x21s"
+        },
+        "blockHasher": {
+            "hash": "reverse",
+            "args": [
+                {
+                    "hash": "x21s"
+                }
+            ]
+        },
+        "hasFounderFee": true,
+        "hasMasterNodes": true,
+        "foundersRewardAddress": [ "rLzD7RxVS1QMZ5yYrmoUvfnTNuzgUqJVVK" ],
+        "shareMultiplier": 256,
+        "explorerBlockLink": "http://explorer.pigeoncoin.xyz/block/$height$",
+        "explorerTxLink": "http://explorer.pigeoncoin.xyz/tx/{0}",
+        "explorerAccountLink": "http://explorer.pigeoncoin.xyz/address/{0}"
     }
 }
