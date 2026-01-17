@@ -27,6 +27,7 @@ jobs:
           images: sikkienl/miningcore
 
       - name: Build and push Docker image
+        id: push
         uses: docker/build-push-action@v5
         with:
           context: .
