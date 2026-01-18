@@ -1,16 +1,40 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0-jammy as BUILDER
-WORKDIR /app
-RUN apt-get update && \
-    apt-get -y install cmake clang ninja-build build-essential libssl-dev pkg-config libboost-all-dev libsodium-dev libzmq5 libzmq3-dev golang-go libgmp-dev libc++-dev zlib1g-dev 
-COPY . .
-WORKDIR /app/src/Miningcore
-RUN dotnet publish -c Release --framework net6.0 -o ../../build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy AS builder
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0-jammy
 WORKDIR /app
+
+# Native build requirements for Miningcore
 RUN apt-get update && \
-    apt-get install -y libzmq5 libzmq3-dev libsodium-dev curl && \
+    apt-get install -y \
+        cmake clang ninja-build build-essential libssl-dev pkg-config \
+        libboost-all-dev libsodium-dev libzmq3-dev golang-go \
+        libgmp-dev libc++-dev zlib1g-dev
+
+# Copy the full source tree
+COPY . .
+
+# DEBUG: show .csproj files so user sees the valid paths
+RUN echo "---- Project files found: ----" && \
+    find /app/src -maxdepth 4 -name "*.csproj"
+
+# Build and publish Miningcore (auto-detects TargetFramework net8.0)
+RUN dotnet publish /app/src/Miningcore/Miningcore.csproj \
+    -c Release \
+    -o /app/build
+
+# --------------------------
+#   RUNTIME STAGE (.NET 8)
+# --------------------------
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy
+
+WORKDIR /app
+
+# Runtime dependencies only
+RUN apt-get update && \
+    apt-get install -y libzmq5 libsodium-dev curl && \
     apt-get clean
-EXPOSE  4000-4090
-COPY --from=BUILDER /app/build ./
-CMD ["./Miningcore", "-c", "config.json" ]
+
+EXPOSE 4000-4090
+
+COPY --from=builder /app/build ./
+
+CMD ["./Miningcore", "-c", "config.json"]
