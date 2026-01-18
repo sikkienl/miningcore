@@ -6,20 +6,13 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -y \
         cmake clang ninja-build build-essential libssl-dev pkg-config \
-        libboost-all-dev libsodium-dev libzmq3-dev golang-go \
+        libboost-all-dev libsodium-dev libzmq5 libzmq3-dev golang-go \
         libgmp-dev libc++-dev zlib1g-dev
 
 # Copy the full source tree
 COPY . .
-
-# DEBUG: show .csproj files so user sees the valid paths
-RUN echo "---- Project files found: ----" && \
-    find /app/src -maxdepth 4 -name "*.csproj"
-
-# Build and publish Miningcore (auto-detects TargetFramework net8.0)
-RUN dotnet publish /app/src/Miningcore/Miningcore.csproj \
-    -c Release \
-    -o /app/build
+WORKDIR /app/src/Miningcore
+RUN dotnet publish -c Release --framework net8.0 -o ../../build
 
 # --------------------------
 #   RUNTIME STAGE (.NET 8)
@@ -36,5 +29,6 @@ RUN apt-get update && \
 EXPOSE 4000-4090
 
 COPY --from=builder /app/build ./
+
 
 CMD ["./Miningcore", "-c", "config.json"]
