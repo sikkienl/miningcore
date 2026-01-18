@@ -651,18 +651,16 @@ public class Program : BackgroundService
  ██║╚██╔╝██║██║██║╚██╗██║██║██║╚██╗██║██║   ██║██║     ██║   ██║██╔══██╗██╔══╝
  ██║ ╚═╝ ██║██║██║ ╚████║██║██║ ╚████║╚██████╔╝╚██████╗╚██████╔╝██║  ██║███████╗
 ");
-        Console.WriteLine(" https://github.com/TheRetroMike/rmt-miningcore\n");
+        Console.WriteLine(" https://github.com/sikkienl/miningcore\n");
         Console.WriteLine(" Donate to one of these addresses to support the project:\n");
 
-        Console.WriteLine(" BCH  - bitcoincash:qzczcn98zusq77fk6jq744xu0u8jlrd6su930qk7x7");
-        Console.WriteLine(" BNB  - 0xde6b4E548d71459Af5041dA71883AEA62426e68E");
-        Console.WriteLine(" BTC  - 31q6x9Vp9J2BJ8rTnW4F8aP744CEAScFN5");
-        Console.WriteLine(" DOGE - DSQLL3m5B1BwZa7jaNnoYaXHVeT9cAHUvd");
-        Console.WriteLine(" ETH  - 0xde6b4E548d71459Af5041dA71883AEA62426e68E");
-        Console.WriteLine(" KAS  - kaspa:qzs36kutqphrqzwnl34zd36wqtsr97dvy6np83ugqac75zjgvsy7qgk4yr722");
-        Console.WriteLine(" LTC  - MAhooUHqeTdhJoMEjbgTwFSqhZmbzyko83");
-        Console.WriteLine(" POL  - 0xde6b4E548d71459Af5041dA71883AEA62426e68E");
-        Console.WriteLine(" SOL  - AsHA1y22XnYf3SwP6g5iGSvJhMcSGaBtEQbzcSccPkJ4");
+        Console.WriteLine(" BCH  - bitcoincash:1JkVSSL7aLJqUx5u5pRZWYT8mdj4LPs3UN");
+        Console.WriteLine(" BTC  - 3DsBzM57xN2yDpRETKLk21GvWixQjM9eBY");
+        Console.WriteLine(" DOGE - DLPU34HgF4yZC31jQHWoPoGcuWhbJgAw2j");
+        Console.WriteLine(" ETH  - 0x1feAb43fB7421bDc21aEf79412805D5137e736e9");
+        Console.WriteLine(" LTC  - MD75zgtXBnCSzKKbMX4w5reu3gP7JWPKQh");
+        Console.WriteLine(" POL  - 0x347bd0ED85c3E8b6F7570A659964D9954AF74ea6");
+        Console.WriteLine(" SOL  - 5v1Ey2PswwPFcH3dnQR1dw52XfjoymfKKDzzFQ3daem9");
         Console.WriteLine();
     }
 
